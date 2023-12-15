@@ -28,7 +28,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     /**
      * 注册自定义拦截器
      *
-     * @param registry
+     * @param registry 拦截器注册器
      */
     protected void addInterceptors(InterceptorRegistry registry) {
         log.info("开始注册自定义拦截器...");
@@ -39,6 +39,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     /**
      * 通过knife4j生成接口文档
+     *
      * @return
      */
     @Bean
@@ -59,6 +60,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     /**
      * 设置静态资源映射
+     *
      * @param registry
      */
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
