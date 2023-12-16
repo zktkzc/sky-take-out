@@ -5,7 +5,6 @@ import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
-import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
@@ -19,8 +18,6 @@ import com.sky.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-
-import java.time.LocalDateTime;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -79,11 +76,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         BeanUtils.copyProperties(employeeDTO, employee);
         employee.setStatus(StatusConstant.ENABLE);
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        Long empId = BaseContext.getCurrentId();
-        employee.setCreateUser(empId);
-        employee.setUpdateUser(empId);
+        // employee.setCreateTime(LocalDateTime.now());
+        // employee.setUpdateTime(LocalDateTime.now());
+        // Long empId = BaseContext.getCurrentId();
+        // employee.setCreateUser(empId);
+        // employee.setUpdateUser(empId);
         employeeMapper.insert(employee);
     }
 
@@ -134,8 +131,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void update(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+        // employee.setUpdateTime(LocalDateTime.now());
+        // employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.update(employee);
     }
 }
