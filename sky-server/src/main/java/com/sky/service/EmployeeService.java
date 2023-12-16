@@ -38,4 +38,19 @@ public interface EmployeeService {
      * @param status 员工账号状态
      */
     void startOrStop(Integer status, Long id);
+
+    /**
+     * 根据id查询员工信息
+     *
+     * @param id 员工id
+     * @return 员工实体对象
+     */
+    Employee getById(Long id);
+
+    /**
+     * 修改员工信息
+     *
+     * @param employeeDTO 员工信息
+     */
+    void update(EmployeeDTO employeeDTO);
 }
