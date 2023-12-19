@@ -79,4 +79,48 @@ public class SetmealServiceImpl implements SetmealService {
         }
         return new PageResult(page.getTotal(), page.getResult());
     }
+
+    /**
+     * 批量删除套餐
+     *
+     * @param ids 套餐id集合
+     */
+    @Override
+    public void deleteBatch(List<Long> ids) {
+        setmealMapper.deleteBatch(ids);
+        for (Long id : ids) {
+            setmealDishMapper.deleteBySetmealId(id);
+        }
+    }
+
+    /**
+     * 修改套餐
+     *
+     * @param setmealDTO 套餐信息
+     */
+    @Override
+    public void update(SetmealDTO setmealDTO) {
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
+        setmealMapper.update(setmeal);
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        if (setmealDishes != null && setmealDishes.size() > 0) {
+            setmealDishMapper.deleteBySetmealId(setmealDTO.getId());
+            for (SetmealDish setmealDish : setmealDishes) {
+                setmealDishMapper.insert(setmealDish);
+            }
+        }
+    }
+
+    /**
+     * 起售或停售套餐
+     *
+     * @param status 状态，0-停售，1-起售
+     * @param id     套餐id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        Setmeal setmeal = Setmeal.builder().id(id).status(status).build();
+        setmealMapper.update(setmeal);
+    }
 }

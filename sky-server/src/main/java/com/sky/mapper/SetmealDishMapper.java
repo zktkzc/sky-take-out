@@ -21,4 +21,11 @@ public interface SetmealDishMapper {
 
     @Select("select * from setmeal_dish where setmeal_id = #{setmealId}")
     List<SetmealDish> getDishBySetmealId(Long setmealId);
+
+    /**
+     * 根据套餐id删除菜品
+     *
+     * @param setmealId 套餐id
+     */
+    void deleteBySetmealId(Long setmealId);
 }

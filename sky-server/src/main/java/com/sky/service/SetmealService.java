@@ -29,4 +29,26 @@ public interface SetmealService {
     void add(SetmealDTO setmealDTO);
 
     PageResult pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    /**
+     * 批量删除套餐
+     *
+     * @param ids 套餐id
+     */
+    void deleteBatch(List<Long> ids);
+
+    /**
+     * 修改套餐
+     *
+     * @param setmealDTO 套餐信息
+     */
+    void update(SetmealDTO setmealDTO);
+
+    /**
+     * 起售或停售贪残
+     *
+     * @param status 状态，0-停售，1-起售
+     * @param id     套餐id
+     */
+    void startOrStop(Integer status, Long id);
 }

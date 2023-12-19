@@ -15,4 +15,8 @@
         insert into setmeal_dish(setmeal_id, dish_id, name, price, copies)
         values (#{setmealId}, #{dishId}, #{name}, #{price}, #{copies})
     </insert>
+
+    <delete id="deleteBySetmealId">
+        delete from setmeal_dish where setmeal_id = #{setmealId}
+    </delete>
 </mapper>

@@ -31,7 +31,7 @@ public class DishController {
     private DishService dishService;
 
     @Resource
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
     /**
      * 新增菜品
@@ -139,7 +139,9 @@ public class DishController {
     }
 
     private void cleanCache(String pattern) {
-        Set keys = redisTemplate.keys(pattern);
-        redisTemplate.delete(keys);
+        Set<String> keys = redisTemplate.keys(pattern);
+        if (keys != null) {
+            redisTemplate.delete(keys);
+        }
     }
 }
