@@ -11,9 +11,12 @@ import com.sky.vo.DishVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 菜品管理
@@ -24,11 +27,11 @@ import java.util.List;
 @RequestMapping("/admin/dish")
 public class DishController {
 
-    final DishService dishService;
+    @Resource
+    private DishService dishService;
 
-    public DishController(DishService dishService) {
-        this.dishService = dishService;
-    }
+    @Resource
+    private RedisTemplate redisTemplate;
 
     /**
      * 新增菜品
@@ -41,6 +44,8 @@ public class DishController {
     public Result save(@RequestBody DishDTO dishDTO) {
         log.info("新增菜品：{}", dishDTO);
         dishService.saveWithFlavor(dishDTO);
+        String key = "dish_" + dishDTO.getCategoryId();
+        cleanCache(key);
         return Result.success();
     }
 
@@ -69,6 +74,7 @@ public class DishController {
     public Result delete(@RequestParam List<Long> ids) {
         log.info("菜品批量删除：{}", ids);
         dishService.deleteBatch(ids);
+        cleanCache("dish_*");
         return Result.success();
     }
 
@@ -76,7 +82,7 @@ public class DishController {
      * 根据id查询菜品
      *
      * @param id 菜品id
-     * @return Result<DishVO>
+     * @return 菜品信息
      */
     @GetMapping("/{id}")
     @ApiOperation("根据id查询菜品")
@@ -97,14 +103,15 @@ public class DishController {
     public Result update(@RequestBody DishDTO dishDTO) {
         log.info("修改菜品：{}", dishDTO);
         dishService.updateWithFlavor(dishDTO);
+        cleanCache("dish_*");
         return Result.success();
     }
 
     /**
      * 根据分类id查询菜品
      *
-     * @param categoryId
-     * @return
+     * @param categoryId 分类id
+     * @return 菜品列表
      */
     @GetMapping("/list")
     @ApiOperation("根据分类id查询菜品")
@@ -112,9 +119,27 @@ public class DishController {
         Dish dish = new Dish();
         dish.setCategoryId(categoryId);
         dish.setStatus(StatusConstant.ENABLE);// 查询起售中的菜品
-
         List<DishVO> list = dishService.listWithFlavor(dish);
-
         return Result.success(list);
+    }
+
+    /**
+     * 菜品起售停售
+     *
+     * @param status 0-停售 1-起售
+     * @param id     菜品id
+     * @return
+     */
+    @PutMapping("/status/{status}")
+    @ApiOperation("菜品起售停售")
+    public Result<String> startOrStop(@PathVariable Integer status, Long id) {
+        dishService.startOrStop(status, id);
+        cleanCache("dish_*");
+        return Result.success();
+    }
+
+    private void cleanCache(String pattern) {
+        Set keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
     }
 }
