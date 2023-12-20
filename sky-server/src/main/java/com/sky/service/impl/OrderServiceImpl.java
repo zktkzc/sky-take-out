@@ -121,7 +121,14 @@ public class OrderServiceImpl implements OrderService {
         jsonObject.put("code", "ORDERPAID");
         OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
         vo.setPackageStr(jsonObject.getString("package"));
-        orderMapper.updateStatus(Orders.PAID, Orders.TO_BE_CONFIRMED, LocalDateTime.now(), ordersPaymentDTO.getOrderNumber());
+        Orders orders = Orders.builder()
+                .id(orderMapper.getIdByNumber(ordersPaymentDTO.getOrderNumber()))
+                .status(Orders.TO_BE_CONFIRMED)
+                .payStatus(Orders.PAID)
+                .checkoutTime(LocalDateTime.now())
+                .number(ordersPaymentDTO.getOrderNumber())
+                .build();
+        orderMapper.update(orders);
 
         return vo;
     }
