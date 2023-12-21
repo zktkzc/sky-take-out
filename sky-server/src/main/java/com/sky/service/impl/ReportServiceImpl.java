@@ -1,13 +1,15 @@
 package com.sky.service.impl;
 
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
-import org.apache.poi.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author tkzc00
@@ -60,8 +63,8 @@ public class ReportServiceImpl implements ReportService {
         }
 
         return TurnoverReportVO.builder()
-                .dateList(StringUtil.join(",", dateList))
-                .turnoverList(StringUtil.join(",", turnoverList))
+                .dateList(StringUtils.join(dateList, ","))
+                .turnoverList(StringUtils.join(turnoverList, ","))
                 .build();
     }
 
@@ -97,9 +100,9 @@ public class ReportServiceImpl implements ReportService {
         }
 
         return UserReportVO.builder()
-                .dateList(StringUtil.join(",", dateList))
-                .totalUserList(StringUtil.join(",", totalUserList))
-                .newUserList(StringUtil.join(",", newUserList))
+                .dateList(StringUtils.join(dateList, ","))
+                .totalUserList(StringUtils.join(totalUserList, ","))
+                .newUserList(StringUtils.join(newUserList, ","))
                 .build();
     }
 
@@ -135,12 +138,12 @@ public class ReportServiceImpl implements ReportService {
             orderCompletionRate = validOrderCount.doubleValue() / totalOrderCount;
         }
         return OrderReportVO.builder()
-                .dateList(StringUtil.join(",", dateList))
+                .dateList(StringUtils.join(dateList, ","))
                 .orderCompletionRate(orderCompletionRate)
-                .orderCountList(StringUtil.join(",", orderCountList))
+                .orderCountList(StringUtils.join(orderCountList, ","))
                 .totalOrderCount(totalOrderCount)
                 .validOrderCount(validOrderCount)
-                .validOrderCountList(StringUtil.join(",", validOrderCountList))
+                .validOrderCountList(StringUtils.join(validOrderCountList, ","))
                 .build();
     }
 
@@ -150,5 +153,25 @@ public class ReportServiceImpl implements ReportService {
         map.put("end", end);
         map.put("status", status);
         return orderMapper.countByMap(map);
+    }
+
+    /**
+     * 统计指定时间区间内的销售额前十的商品
+     *
+     * @param begin 开始时间
+     * @param end   结束时间
+     * @return 销售额前十的商品统计结果
+     */
+    @Override
+    public SalesTop10ReportVO getSalesTop10(LocalDate begin, LocalDate end) {
+        LocalDateTime beginTime = LocalDateTime.of(begin, LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
+        List<GoodsSalesDTO> top = orderMapper.getSalesTop(beginTime, endTime);
+        List<String> nameList = top.stream().map(GoodsSalesDTO::getName).collect(Collectors.toList());
+        List<Integer> numberList = top.stream().map(GoodsSalesDTO::getNumber).collect(Collectors.toList());
+        return SalesTop10ReportVO.builder()
+                .nameList(StringUtils.join(nameList, ","))
+                .numberList(StringUtils.join(numberList, ","))
+                .build();
     }
 }
