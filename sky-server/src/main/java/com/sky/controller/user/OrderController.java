@@ -100,4 +100,18 @@ public class OrderController {
         OrdersPageQueryVO pageResult = orderService.listByOrderId(id);
         return Result.success(pageResult);
     }
+
+    /**
+     * 催单
+     *
+     * @param id 订单id
+     * @return 催单结果
+     */
+    @GetMapping("/reminder/{id}")
+    @ApiOperation("催单")
+    public Result reminder(@PathVariable Long id) {
+        log.info("催单：{}", id);
+        orderService.reminder(id);
+        return Result.success();
+    }
 }

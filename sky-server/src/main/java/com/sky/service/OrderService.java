@@ -59,4 +59,11 @@ public interface OrderService {
      * @return
      */
     OrdersPageQueryVO listByOrderId(Long id);
+
+    /**
+     * 催单
+     *
+     * @param id 订单id
+     */
+    void reminder(Long id);
 }
