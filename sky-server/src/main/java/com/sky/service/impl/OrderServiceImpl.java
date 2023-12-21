@@ -260,7 +260,7 @@ public class OrderServiceImpl implements OrderService {
         if (orders != null) {
             throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
         }
-        Map<String, Object> map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         map.put("type", 2); // 1-来单提醒，2-用户催单
         map.put("orderId", orders.getId());
         map.put("content", "用户催单：" + orders.getNumber());
