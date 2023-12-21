@@ -3,6 +3,7 @@ package com.sky.service;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
+import com.sky.entity.Orders;
 import com.sky.result.PageResult;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
@@ -66,4 +67,34 @@ public interface OrderService {
      * @param id 订单id
      */
     void reminder(Long id);
+
+    /**
+     * 取消订单
+     *
+     * @param orders 订单信息
+     */
+    void cancelOrder(Orders orders);
+
+    /**
+     * 完成订单
+     *
+     * @param id 订单id
+     */
+    void completeOrder(Long id);
+
+    /**
+     * 拒单
+     *
+     * @param orders 订单信息
+     */
+    void rejection(Orders orders);
+
+    /**
+     * 接单
+     *
+     * @param orders 订单信息
+     */
+    void confirm(Orders orders);
+
+    void delivery(Long id);
 }

@@ -267,4 +267,69 @@ public class OrderServiceImpl implements OrderService {
         String jsonString = JSON.toJSONString(map);
         webSocketServer.sendToAllClient(jsonString);
     }
+
+    /**
+     * 取消订单
+     *
+     * @param orders 订单信息
+     */
+    @Override
+    public void cancelOrder(Orders orders) {
+        orders.setStatus(Orders.CANCELLED);
+        orders.setCancelTime(LocalDateTime.now());
+        orders.setCancelReason(orders.getCancelReason());
+        orderMapper.update(orders);
+    }
+
+    /**
+     * 完成订单
+     *
+     * @param id 订单id
+     */
+    @Override
+    public void completeOrder(Long id) {
+        Orders orders = Orders.builder()
+                .id(id)
+                .status(Orders.COMPLETED)
+                .build();
+        orderMapper.update(orders);
+    }
+
+    /**
+     * 拒单
+     *
+     * @param orders 订单信息
+     */
+    @Override
+    public void rejection(Orders orders) {
+        orders.setStatus(Orders.CANCELLED);
+        orders.setRejectionReason(orders.getRejectionReason());
+        orderMapper.update(orders);
+    }
+
+    /**
+     * 接单
+     *
+     * @param orders 订单信息
+     */
+    @Override
+    public void confirm(Orders orders) {
+        orders.setStatus(Orders.CONFIRMED);
+        orderMapper.update(orders);
+    }
+
+    /**
+     * 派送订单
+     *
+     * @param id 订单id
+     */
+    @Override
+    public void delivery(Long id) {
+        Orders orders = Orders.builder()
+                .id(id)
+                .status(Orders.DELIVERY_IN_PROGRESS)
+                .deliveryTime(LocalDateTime.now())
+                .build();
+        orderMapper.update(orders);
+    }
 }
