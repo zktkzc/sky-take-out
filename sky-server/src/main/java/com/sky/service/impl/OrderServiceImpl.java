@@ -17,6 +17,7 @@ import com.sky.mapper.*;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderPaymentVO;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrdersPageQueryVO;
 import com.sky.websocket.WebSocketServer;
@@ -331,5 +332,28 @@ public class OrderServiceImpl implements OrderService {
                 .deliveryTime(LocalDateTime.now())
                 .build();
         orderMapper.update(orders);
+    }
+
+    /**
+     * 各个状态的订单数量统计
+     *
+     * @return 订单统计数据
+     */
+    @Override
+    public OrderStatisticsVO orderStatistics() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", Orders.CONFIRMED);
+        Integer confirmed = orderMapper.countByMap(map);
+        map.clear();
+        map.put("status", Orders.DELIVERY_IN_PROGRESS);
+        Integer deliveryInProgress = orderMapper.countByMap(map);
+        map.clear();
+        map.put("status", Orders.TO_BE_CONFIRMED);
+        Integer toBeConfirmed = orderMapper.countByMap(map);
+        return OrderStatisticsVO.builder()
+                .confirmed(confirmed)
+                .deliveryInProgress(deliveryInProgress)
+                .toBeConfirmed(toBeConfirmed)
+                .build();
     }
 }
