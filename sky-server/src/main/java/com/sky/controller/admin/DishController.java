@@ -130,7 +130,7 @@ public class DishController {
      * @param id     菜品id
      * @return
      */
-    @PutMapping("/status/{status}")
+    @PostMapping("/status/{status}")
     @ApiOperation("菜品起售停售")
     public Result<String> startOrStop(@PathVariable Integer status, Long id) {
         dishService.startOrStop(status, id);
